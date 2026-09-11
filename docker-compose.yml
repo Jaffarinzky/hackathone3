@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: polytech_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: polytech_db
+    ports:
+      # Открывает порт 5432 ТОЛЬКО внутри VPS (для безопасности)
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Проверка готовности БД перед запуском бэкенда
+      test: ["CMD-SHELL", "pg_isready -U admin -d polytech_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: polytech_backend
+    restart: always
+    ports:
+      # Открываем порт 8000 наружу.
+      # Если хотите, чтобы сайт работал сразу по HTTP, можно сделать "80:8000"
+      - "8000:8000"
+    environment:
+      # ВАЖНО: хост БД здесь - это имя сервиса "db", а не localhost!
+      - DATABASE_URL=postgresql://admin:${DB_PASSWORD}@db:5432/polytech_db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://api.apinex.bond/v1}
+      - OPENAI_MODEL=${OPENAI_MODEL:-free/deepseek-v4-flash-0731}
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
