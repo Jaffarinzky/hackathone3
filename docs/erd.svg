@@ -1,0 +1,67 @@
+<svg viewBox="0 0 980 350" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <marker id="crow" markerWidth="14" markerHeight="14" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L10,6 L0,12" fill="none" stroke="#475569" stroke-width="1.4"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="980" height="350" fill="#ffffff"/>
+  <text x="20" y="30" font-size="18" font-weight="700" fill="#0f172a">CryptoAssist — ER-диаграмма</text>
+  <text x="20" y="50" font-size="12" fill="#64748b">PostgreSQL 15 · SQLAlchemy ORM · sessions 1—N tickets 1—N messages</text>
+
+  <!-- sessions -->
+  <g>
+    <rect x="30" y="110" width="240" height="120" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="30" y="110" width="240" height="34" rx="8" fill="#3b82f6"/>
+    <rect x="30" y="126" width="240" height="18" fill="#3b82f6"/>
+    <text x="150" y="133" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">sessions</text>
+    <text x="46" y="168" font-size="12.5" fill="#0f172a">🔑 id : String (PK, UUID4)</text>
+    <text x="46" y="196" font-size="11.5" fill="#64748b">без других полей —</text>
+    <text x="46" y="212" font-size="11.5" fill="#64748b">ни status, ни created_at</text>
+  </g>
+
+  <!-- tickets -->
+  <g>
+    <rect x="380" y="70" width="270" height="230" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <rect x="380" y="70" width="270" height="34" rx="8" fill="#16a34a"/>
+    <rect x="380" y="86" width="270" height="18" fill="#16a34a"/>
+    <text x="515" y="93" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">tickets</text>
+    <text x="396" y="128" font-size="12.5" fill="#0f172a">🔑 id : String (PK), напр. CEX-1234</text>
+    <text x="396" y="150" font-size="12.5" fill="#0f172a">🔗 session_id : String (FK → sessions.id)</text>
+    <text x="396" y="172" font-size="12.5" fill="#0f172a">category : String (default "Другое")</text>
+    <text x="396" y="194" font-size="12.5" fill="#0f172a">tags : JSON (default [])</text>
+    <text x="396" y="216" font-size="12.5" fill="#0f172a">status : String (open/closed/</text>
+    <text x="410" y="232" font-size="12.5" fill="#0f172a">needs_specialist)</text>
+    <text x="396" y="254" font-size="12.5" fill="#0f172a">rate : Integer, nullable (1–5)</text>
+    <text x="396" y="276" font-size="12.5" fill="#0f172a">created_at : DateTime</text>
+  </g>
+
+  <!-- messages -->
+  <g>
+    <rect x="750" y="100" width="210" height="180" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+    <rect x="750" y="100" width="210" height="34" rx="8" fill="#a855f7"/>
+    <rect x="750" y="116" width="210" height="18" fill="#a855f7"/>
+    <text x="855" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">messages</text>
+    <text x="766" y="158" font-size="12.5" fill="#0f172a">🔑 id : String (PK, UUID4)</text>
+    <text x="766" y="180" font-size="12.5" fill="#0f172a">🔗 ticket_id : String</text>
+    <text x="780" y="196" font-size="12.5" fill="#0f172a">(FK → tickets.id)</text>
+    <text x="766" y="218" font-size="12.5" fill="#0f172a">sender : String</text>
+    <text x="780" y="234" font-size="12.5" fill="#0f172a">(user/bot/admin)</text>
+    <text x="766" y="256" font-size="12.5" fill="#0f172a">text : Text</text>
+    <text x="766" y="274" font-size="11.5" fill="#0f172a">created_at : DateTime</text>
+  </g>
+
+  <!-- relation sessions -> tickets -->
+  <line x1="270" y1="170" x2="378" y2="170" stroke="#475569" stroke-width="1.4" marker-end="url(#crow)"/>
+  <text x="285" y="163" font-size="12" fill="#475569">1</text>
+  <text x="355" y="163" font-size="12" fill="#475569">N</text>
+  <text x="290" y="185" font-size="11" fill="#64748b">cascade delete-orphan</text>
+
+  <!-- relation tickets -> messages -->
+  <line x1="650" y1="185" x2="748" y2="185" stroke="#475569" stroke-width="1.4" marker-end="url(#crow)"/>
+  <text x="662" y="178" font-size="12" fill="#475569">1</text>
+  <text x="730" y="178" font-size="12" fill="#475569">N</text>
+  <text x="660" y="200" font-size="11" fill="#64748b">cascade delete-orphan</text>
+
+  <text x="20" y="320" font-size="11.5" fill="#94a3b8">confidence_score, is_final, text бота — вычисляемые поля ответа LLM-роутера, в БД не хранятся (см. README → «Логика LLM-роутера»).</text>
+</svg>
