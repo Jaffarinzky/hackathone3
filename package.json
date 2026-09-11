@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "npm-build-zip": "^2.0.1"
+  }
+}
